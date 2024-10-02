@@ -11,11 +11,11 @@ int Example1() {
 	float dt = 0.01;
 
 	for (float t = 0; t < T; t += dt) {
-		xbar += g * (t + dt / 2) * dt;
+		xbar += g * (t + dt/2) * dt;
 	}
 	errorinpercent = fabs(490.0 - xbar); // fabs : 실수형 절댓값 반환
-	cout << "dt " << dt << " x = 490 " << xbar << " error : " << errorinpercent;
-	return 1;
+		cout << "dt " << dt << " x = 490 " << xbar << " error : " << errorinpercent;
+		return 1;
 }
 
 int calculate_x(float dt) {
@@ -79,42 +79,31 @@ void Drill1() {
 	float Analytic = 0, Numerical = 0;
 	float dt = 0.1;
 	ofstream func("Integration.txt");
-
-	float percentage_error = 0;
-	float error_avg = 0;
 	for (float t = 0; t < 5; t += dt) {
 		func << t << " " << Analytic << " " << Numerical << endl;
-		if (Analytic != 0) percentage_error = fabs(Analytic - Numerical) / Analytic * 100;
-		cout << "t : " << t << "\t Percentage Error : " << percentage_error <<"%" << endl;
-		error_avg += percentage_error;
 		Analytic = (1 - cos(2 * PI * t)) / (2 * PI);
-		Numerical += dt * sin(2 * PI * (t));
+		Numerical += dt * sin(2 * PI * (t+dt/2));
 	}
 	func.close();
-	cout << "Average_Error_percentage : " << error_avg / (5 / dt) << "%";
 }
 
 float f1(float x) {
 	return sin(2 * PI * 220 * x);
 }
 float f2(float x) {
-	// Analytic Solution
+	// f2(x) = f1'(x) 의 실제값
 	return 440. * PI * cos(2 * PI * 220 * x);
 }
 float f3(float x, float dx) {
-	// Numerical Solution
+	// f1'(x) 의 근사값
 	float dx2 = dx / 2;
 	return (f1(x + dx2) - f1(x - dx2) / dx); // Better than f1(x+dx) - f1(x) / dx
-}
-float f4(float x) {
-	float dx = 0.001;
-	return (f1(x + dx) - f1(x)) / dx;
 }
 void Example5() {
 	ofstream myout("Diff.txt");
 	float dt = 0.001, t = 0.0;
 	for (int i = 0; i < 50; i++) {
-		myout << t << " " << f2(t) << " " << f3(t, dt) << " " << f4(t) <<"\n";
+		myout << t << " " << f2(t) << " " << f3(t, dt) << "\n";
 		t += dt;
 	}
 	myout.close();
@@ -127,14 +116,16 @@ int answer_to_everything() {
 	return sin(100) * cos(20);
 }
 void Example6() {
-	// Computation Time during 10000 times of calculation
+	// Computation Time
 	auto start = get_time::now(); // Use auto keyword to minimize typing strokes
 	for (long i = 0; i < 10000; i++) answer_to_everything();
 	auto end = get_time::now();
 	auto diff = end - start;
 	cout << "Elapsed time is :  " << chrono::duration_cast<ns>(diff).count() << " ns " << endl;
+
 }
 
+#include <iomanip>
 #include <ctime>
 void insertionSort(int n, float* array) {
 	int d;
@@ -150,6 +141,7 @@ void insertionSort(int n, float* array) {
 		}
 	}
 }
+
 void Example7() {
 	int N = 5;
 	clock_t start, end, diff;
@@ -168,6 +160,5 @@ void Example7() {
 }
 
 void main() {
-	Example7();
+	Drill1();
 }
-

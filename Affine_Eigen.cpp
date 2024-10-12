@@ -1,6 +1,8 @@
 #include <iostream>
 #include <Eigen/Dense>
+#include <cmath>
 #include "bmpNew.h"
+#define PI 3.141592
 
 using namespace Eigen;
 using namespace std;
@@ -11,6 +13,30 @@ void Affine_Transform_image(Matrix2d Matrix, int x, int y, int* newX, int* newY)
     Vector2d transformed = Matrix * original;
     *newX = (int)(transformed[0]);
     *newY = (int)(transformed[1]);
+}
+
+void Affine_inverse_Transform_image() {
+
+}
+
+Matrix2d get_Matrix_A_2D(float a, float b, float x) {
+    // This Matrix gives a Matrix A for Scaling and Rotation
+    // size of Matrix A = 2X2
+   
+    // scaling matrix S
+    Matrix2d S;
+    S << a, 0, 0, b;
+
+    // Rotating Matrix R
+    Matrix2d R;
+    float degree_to_rad = PI / 180. ;
+    R << cos(x * degree_to_rad), -sin(x * degree_to_rad), sin(x * degree_to_rad), cos(x * degree_to_rad);
+
+    // R * S : 회전 후 스케일링
+    Matrix2d A;
+    A = R * S;
+
+    return A;
 }
 
 int main() {
@@ -28,8 +54,8 @@ int main() {
     unsigned char* Transformed = new unsigned char[img_width * img_height * 3];
 
     // 3. Affine 변환 행렬 생성
-    Matrix2d Affine_Matrix;
-    Affine_Matrix << 1, 0, 0, 1; // 2X2
+    Matrix2d Affine_Matrix = get_Matrix_A_2D(2,1./2,30);
+    //Affine_Matrix << 1, 0, 0, 1; // 2X2
 
     // 4. Affine 변환
     // Bmp file 이미지 시작점 : 왼쪽 하단 -> (0,0)

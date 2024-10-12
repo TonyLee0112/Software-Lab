@@ -13,13 +13,13 @@ void Affine_Transform_2D(Matrix2d Matrix, int x, int y, int* newX, int* newY) {
     *newY = (int)(transformed[1]);
 }
 
-void main() {
+int main() {
     // 1. 이미지 파일 읽기
     int img_width, img_height;
     unsigned char* img = ReadBmp("sunflower.bmp", &img_width, &img_height);
     if (!img) {
         cout << "Cannot find the file" << endl;
-        return;
+        return 666;
     }
 
     // 2. 변환될 이미지를 위한 공간 할당 Memory Allocation    
@@ -54,4 +54,5 @@ void main() {
         }
     }
     WriteBmp("sunflower_Eigened.bmp", Transformed, img_width, img_height);
+    return 123;
 }

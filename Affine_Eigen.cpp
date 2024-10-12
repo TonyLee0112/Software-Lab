@@ -5,7 +5,7 @@
 using namespace Eigen;
 using namespace std;
 
-void Affine_Transform_2D(Matrix2d Matrix, int x, int y, int* newX, int* newY) {
+void Affine_Transform_image(Matrix2d Matrix, int x, int y, int* newX, int* newY) {
     // 변수를 ptr 로 쓰면 장점 : 반환을 할 필요가 없다!
     Vector2d original(x, y); // 원래 좌표
     Vector2d transformed = Matrix * original;
@@ -39,7 +39,8 @@ int main() {
         for (int x = 0; x < width_bytes; x += 3) {
             int newX, newY;
             // Translating
-            Affine_Transform_2D(Affine_Matrix, x, y, &newX, &newY); // &newX : newX 의 주소, (x,y) 가 변환되어서 (newX,newY) 에 저장됨.
+            // x / 3 이 실제 x 좌표.
+            Affine_Transform_image(Affine_Matrix, x/3 , y, &newX, &newY); // &newX : newX 의 주소, (x/3,y) 가 변환되어서 (newX,newY) 에 저장됨.
 
             if (newX >= 0 && newX < img_width && newY >= 0 && newY < img_height) {
                 // 두 index 모두 byte 단위
@@ -57,6 +58,5 @@ int main() {
 
     delete[] img; // 메모리 해제
     delete[] Transformed; // 메모리 해제
-    
     return 123;
 }

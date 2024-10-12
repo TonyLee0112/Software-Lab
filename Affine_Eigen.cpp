@@ -54,5 +54,9 @@ int main() {
         }
     }
     WriteBmp("sunflower_Eigened.bmp", Transformed, img_width, img_height);
+
+    delete[] img; // 메모리 해제
+    delete[] Transformed; // 메모리 해제
+    
     return 123;
 }

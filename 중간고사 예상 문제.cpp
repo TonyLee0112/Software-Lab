@@ -6,62 +6,55 @@
 #include <iostream>
 #include <Eigen/Dense>
 #include "bmpNew.h"
-
-using namespace Eigen;
 using namespace std;
+using namespace Eigen;
 
-void affineXform(const Matrix3d& transformMatrix, int inputX, int inputY, int& outputX, int& outputY) {
-    // 3D homogeneous coordinates (x, y, 1)
-    Vector3d inputVector(inputX, inputY, 1);
-    
-    // Apply the affine transformation
-    Vector3d outputVector = transformMatrix * inputVector;
-    
-    // Extract the transformed X and Y coordinates
-    outputX = static_cast<int>(outputVector[0]);
-    outputY = static_cast<int>(outputVector[1]);
+void Affine_Transform(int x, int y, const Matrix2d& Matrix, int* new_x, int* new_y) {
+    // x와 y는 원래 좌표, Matrix는 변환 행렬
+    Vector2d original(x, y);  // 2D 벡터로 원래 좌표를 표현
+    Vector2d transformed = Matrix * original;  // Affine 변환 수행
+    *new_x = static_cast<int>(transformed[0]);
+    *new_y = static_cast<int>(transformed[1]);
 }
 
 int main() {
-    // 1. Read a BMP file
-    int width, height;
-    unsigned char* originalImage = ReadBmp("sunflower.bmp", &width, &height); // 24-bit BMP file
-    if (!originalImage) { // If the file does not exist
-        std::cout << "Cannot find image file" << std::endl;
+    // 1. 이미지 파일을 읽어서 포인터로 받음
+    int img_width, img_height;
+    unsigned char* img = ReadBmp("sunflower.bmp", &img_width, &img_height); // 너비: 564, 높이: 374
+    if (!img) {
+        cout << "The image file does not exist in the same folder" << endl;
         return 666;
     }
 
-    std::cout << "Width: " << width << " Height: " << height << std::endl;
+    // 2. 변환된 이미지를 위한 공간 할당 (픽셀 * 3 바이트/픽셀)
+    unsigned char* Transformed = new unsigned char[img_width * img_height * 3];
 
-    // 2. Allocate memory for the modified image
-    unsigned char* transformedImage = new unsigned char[width * height * 3];
+    // 3. Affine 변환 행렬 (Identity Matrix로 시작)
+    Matrix2d Affine_Matrix;
+    Affine_Matrix << 1, 0,
+                     0, 1;  // 기본적으로 아무런 변환도 하지 않음 (Identity Matrix)
 
-    // 3-1. Define the affine transformation matrix (Identity matrix with translation)
-    Matrix3d affineMatrix;
-    affineMatrix << 1, 0, 0,  // No scaling, no rotation
-                    0, 1, 0,  // No scaling, no rotation
-                    0, 0, 1;  // No translation
-
-    // 3-2. Apply the transformation to each pixel
-    for (int y = 0; y < height; y++) {
-        for (int x = 0; x < width * 3; x += 3) { // Step by 3 to account for R, G, B
+    for (int y = 0; y < img_height; y++) {
+        for (int x = 0; x < img_width * 3; x += 3) {
             int newX, newY;
-            affineXform(affineMatrix, x / 3 - width / 2, y - height / 2, newX, newY); // Transform pixel positions
 
-            // Check if the new coordinates are within bounds
-            if (newX >= 0 && newX < width && newY >= 0 && newY < height) {
-                int transformedIndex = (newY * width + newX) * 3;
-                int originalIndex = (y * width + x / 3) * 3;
+            // 원래 이미지 좌표를 변환된 좌표로 변환
+            Affine_Transform(x / 3 + img_width / 2, y + img_height / 2, Affine_Matrix, &newX, &newY);
 
-                // Copy RGB values from the original image to the transformed image
-                transformedImage[transformedIndex] = originalImage[originalIndex];
-                transformedImage[transformedIndex + 1] = originalImage[originalIndex + 1];
-                transformedImage[transformedIndex + 2] = originalImage[originalIndex + 2];
+            // 변환된 좌표가 유효한 범위 내에 있는지 확인
+            if (newX >= 0 && newX < img_width && newY >= 0 && newY < img_height) {
+                int original_index = (y * img_width + x / 3) * 3;
+                int transformed_index = (newY * img_width + newX) * 3;
+
+                // BMP raw 포맷에서 RGB 값을 복사
+                Transformed[transformed_index] = img[original_index]; // R
+                Transformed[transformed_index + 1] = img[original_index + 1]; // G
+                Transformed[transformed_index + 2] = img[original_index + 2]; // B
             }
         }
     }
 
-    // 4-1. Write the modified image to a new BMP file
-    WriteBmp("sunflowerTransformedEigen.bmp", transformedImage, width, height);
+    // 4. 변환된 이미지를 새로운 파일로 저장
+    WriteBmp("sunflower_modified_eigen.bmp", Transformed, img_width, img_height);
     return 123;
 }

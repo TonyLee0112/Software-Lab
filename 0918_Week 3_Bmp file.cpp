@@ -55,48 +55,54 @@ void Drill2() {
 	}
 	WriteBmp("New_flower2.bmp", tmp_bmp, width, length);
 }
-int Example1() {
-	// How to make a raw image file
-	// 1. write a raw file
-	int x = 200, y = 100;
+void Example1() {
+	// Raw file 은 Header 가 없다.
+	// 필요한 정보를 직접 추가해주어야한다.
+	// bmp 와 다른 점: 시작점이 좌측 아래에서 좌측 위로 바뀜.
+	// BGR 순서에서 RGB 순서로 바뀜
+	int width = 200, length = 100;
 	int dx;
-	int x3 = 600; // One Horizontal line bytes
-	unsigned char* test = new unsigned char[x * y * 3];
-	for (int i = 0; i < y; i++) {
-		// Raw file starts at the top
-		int xx = i * x3; // i th floor
-		for (int Rep = dx = 0; Rep < x; Rep++, dx += 3) {
-			test[xx + dx] = 0; // R
-			test[xx + dx + 1] = 0; // G
-			test[xx + dx + 2] = 240; // B
+
+	// 1. raw 파일 만들기
+	unsigned char* test = new unsigned char[width * length * 3];
+	for (int y = 0; y < length; y++) {
+		int dy = y * width * 3;
+		for (int rep = dx = 0; rep < width; rep++, dx += 3) {
+			test[dy + dx] = 0;
+			test[dy + dx + 1] = 0;
+			test[dy + dx + 2] = 240;
 		}
 	}
-	// Now we have a series of RGB image raw data
-	// Let's make a image file with this
+	// ofstream 모드 : text 모드, binary 모드
+	// binary 모드 -> 이미지, 음성, 영상 등등.. 데이터를 원본으로 읽고 쓰고 싶을 때
+	// img file 을 다루기 때문에 binary 모드로
 	ofstream raw("test.raw", ios::binary | ios::out);
-	raw.write((char*)test, x * y * 3); // Input : Location, Data size
+	// char* 는 const char* 로 바로 cast 되지만 unsigned char* 는 다시 지정해주어야 함.
+	raw.write((char*)test, width * length * 3);
 	raw.close();
 
-	// 2. Modify
-	ifstream Raw("test.raw", ios::binary | ios::in); // 위에서 close 하더라도 object name 이 겹치면 안됨. 오류뜸
+	// 2. 수정
+	ifstream Raw("test.raw", ios::binary | ios::in);
 	if (!Raw) {
-		cout << "Can't Read\n"; return 666;
+		cout << "Oh my god";
+		return;
 	}
-	Raw.read((char*)test, x * y * 3); // raw 했다가 오류 뜸
+	Raw.read((char*)test, width * length * 3);
 	Raw.close();
-	for (int floor = y / 2; floor < y; floor++) {
-		int xx = floor * x3;
-		for (int Rep = dx = 0; Rep < x; Rep++, dx += 3) {
-			test[xx + dx] = 255; // R
-			test[xx + dx + 1] = 0; // G
-			test[xx + dx + 2] = 0; // B
+
+	unsigned char* a;
+	for (int y = length / 2; y < length; y++) {
+		a = test + y * width * 3;
+		for (int dx = 0; dx < width; dx++) {
+			a[dx * 3] = 255;
+			a[dx * 3 + 1] = 0;
+			a[dx * 3 + 2] = 0;
 		}
 	}
 
-	// 3. Write the modified image
-	ofstream Raw_out("test2.raw", ios::binary | ios::out);
-	Raw_out.write((char*)test, x * y * 3);
-	Raw_out.close();
+	ofstream raw_out("test2.raw", ios::binary | ios::out);
+	raw_out.write((char*)test, width * length * 3);
+	raw_out.close();
 }
 int Example2() {
 	const int X = 500, Y = 300;

@@ -3,28 +3,28 @@
 #include "bmpNew.h"
 using namespace std;
 int Drill1() {
-	// interlaced BGR : (BGR)(BGR)(BGR)...
-	unsigned char* data = new unsigned char[15000]; // Buffer size : 5000 * 3 bytes
-	for (int pixel_index = 0; pixel_index < 5000; pixel_index++) {
-		int byte_address = pixel_index * 3;
-		data[byte_address] = 0; // B
-		data[byte_address + 1] = 0; // G
-		data[byte_address + 2] = 255; // R
-	}
-	// Make a bmp image
-	WriteBmp("suhR.bmp", data, 100, 50); // filename, image ptr, width, height
+	// Non - interlaced 방식 사용
+// Bytes = (RGB)(RGB)(RGB)(RGB).. 
+// 0~255 까지니까 1byte 짜리 unsigned char ptr 사용.
+// signed char ptr = -127 ~ 128 -> 129 이상의 RGB 값 표현할 수 없다.
+int width = 100; int length = 50;
+unsigned char* data = new unsigned char[3 * width * length];
 
-	// Read a bmp image
-	int x, y;
-	
-	// Return raw image ptr
-	unsigned char* bmpB = ReadBmp("suhR.bmp", &x, &y);
-	// x와 y 에 100과 50이 들어간다.
-	if (!bmpB) {
-		cout << "Cannot find the image file" << endl;
-	}
-	cout << " Main " << x << " by " << y << endl; // Parsed Value Of Header File
-	return 123;
+for (int i = 0; i < 3 * width * length; i+=3) {
+	data[i] = 0; // B
+	data[i + 1] = 0; // G
+	data[i + 2] = 255; // R
+}
+
+WriteBmp("suhR.bmp",data,width,length);
+
+// 이제 읽기
+int x, y;
+unsigned char* file = ReadBmp("suhR.bmp", &x, &y);
+if (!file) {
+	cout << "Cannot find image file" << endl;
+}
+cout << "Main " << x << " by " << y << endl;
 }
 int Drill2() {
 	// Still Interlaced format

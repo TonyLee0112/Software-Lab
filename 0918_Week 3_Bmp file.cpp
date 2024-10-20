@@ -26,41 +26,34 @@ if (!file) {
 }
 cout << "Main " << x << " by " << y << endl;
 }
-int Drill2() {
-	// Still Interlaced format
-	// 1. Read a bmp file
-	// Read a bmp image
-	int width, height;
-	// Return the raw image ptr
-	unsigned char* bmpB = ReadBmp("sunflower.bmp", &width, &height);
-	if (!bmpB) {
-		cout << "Cannot find image file" << endl;
-		return 666;
-	}
-	cout << "Successfully Loaded\nWidth : " << width << " , Height : " << height << endl;
+void Drill2() {
+	// 사전 정보
+	int red_box_width = 100, red_box_length = 50;
 
-	// 2. width, height -> modified memory allocation
-	unsigned char* tmp_bmp = new unsigned char[width * height * 3];
-	unsigned char* x;
-	
-	// 3. modify
-	for (int i = 0; i < width * height * 3; i++) {
-		tmp_bmp[i] = bmpB[i];
+	int width, length;
+	unsigned char* sunflower = ReadBmp("sunflower.bmp", &width, &length);
+	if (!sunflower) {
+		cout << "Cant find file";
 	}
-	int index = 0;
-	for (int i = 0; i < 50; i++) { // y축 고정
-		x = tmp_bmp; // img file 의 시작 주소
-		x += width * i * 3; // i 층의 0번째 원소로 이동
-		x += (width - 100) * 3; // 추가할 부분의 왼쪽 끝
-		for (int Rep = index = 0; Rep < 100; Rep++, index += 3) {
-			x[index] = 0; // B
-			x[index + 1] = 0; // G
-			x[index + 2] = 255; // R
+
+	// Copy the original file
+	unsigned char* tmp_bmp = new unsigned char[width * length * 3];
+	for (int rep = 0; rep < width * length * 3; rep++) {
+		tmp_bmp[rep] = sunflower[rep];
+	}
+	// 시작 주소 복사
+	unsigned char* start;
+	
+	// 시작
+	for (int y = 0; y < red_box_width; y++) {
+		start = tmp_bmp + y * width * 3 + (width - red_box_width) * 3;
+		for (int dx = 0; dx < red_box_width * 3; dx += 3) {
+			start[dx] = 0;
+			start[dx + 1] = 0;
+			start[dx + 2] = 255;
 		}
 	}
-	// 4. write the modified image
-	WriteBmp("sunflowerM.bmp", tmp_bmp, width, height);
-	return 123;
+	WriteBmp("New_flower2.bmp", tmp_bmp, width, length);
 }
 int Example1() {
 	// How to make a raw image file

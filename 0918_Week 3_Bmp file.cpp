@@ -61,8 +61,7 @@ int Example1() {
 	int x = 200, y = 100;
 	int dx;
 	int x3 = 600; // One Horizontal line bytes
-	unsigned char* test;
-	test = new unsigned char[x * y * 3];
+	unsigned char* test = new unsigned char[x * y * 3];
 	for (int i = 0; i < y; i++) {
 		// Raw file starts at the top
 		int xx = i * x3; // i th floor

@@ -4,20 +4,33 @@ using namespace std;
 const float g = 9.8;
 
 int Example1() {
-	float v;
-	float T = 10;
-	float errorinpercent;
-	float xbar = 0;
-	float dt = 0.01;
-
+	// Distance for 10 seconds with free-fall
+	float v, T = 10, errorinpercent, xbar = 0, dt = 0.01;
 	for (float t = 0; t < T; t += dt) {
-		xbar += g * (t + dt/2) * dt;
+		// Numerical Method
+		// x(10) = integral (t : 0 to 10) g * t * dt
+		xbar += g * t * dt;
 	}
-	errorinpercent = fabs(490.0 - xbar); // fabs : 실수형 절댓값 반환
-		cout << "dt " << dt << " x = 490 " << xbar << " error : " << errorinpercent;
-		return 1;
-}
 
+	float xbar2 = 0;
+	for (float t2 = 0; t2 < T; t2 += dt) {
+		xbar2 += g * (t2 + dt / 2) * dt;
+	}
+
+	cout << "기존 방법 : " << xbar << "\n보정된 방법 : " << xbar2 << "\n실제 값 : " << 490 << endl;
+
+	// 보정된 방법이 더 좋은 이유는?
+	// t 와 t + dt 의 중점인 t + dt/2 의 값을 설정해서 오차를 보정 (사다리꼴 모양)
+
+	cout << "첫번째 방법" << endl;
+	errorinpercent = fabs(490. - xbar) / 490. * 100.; // 오차율
+	cout << "dt " << dt << " x = 490 " << xbar << " error " << errorinpercent << "%\n";
+
+	cout << "두번째 방법" << endl;
+	errorinpercent = fabs(490. - xbar2) / 490. * 100.;
+	cout << "dt " << dt << " x = 490 " << xbar2 << " error " << errorinpercent << "%\n";
+}
+///////////////////////////////////////////
 int calculate_x(float dt) {
 	float v;
 	float T = 10;
@@ -38,7 +51,7 @@ void Example2() {
 		ddt *= 0.1;
 	}
 }
-
+/////////////////////////////////////////
 void binary(float x) {
 	float rx = x;
 	float n2 = 0.5;

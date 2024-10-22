@@ -115,25 +115,35 @@ int Exercise1() {
 	cout << " SampleRate = " << myHeader.sampleRate << endl;
 	xx.close();
 }
-void Exercise2() {
-	short* data, leftdata, rightdata;
-	waveHeader myHeader;
-	int n = myHeader.sampleRate * 5; // for 5 seconds n = 44100 * 5
-	data = new short[n * myHeader.numChannels]; // short variables 의 공간을 만들어둔다.
-	float dt = 1. / (float)(myHeader.sampleRate);
-	float f1 = 261.63, f2 = 329.63;
-	float A = 10000.0;
-	for (int i = 0; i < n; i += 1) {
-		float t = i * dt;
-		leftdata = (short)(A * cos(2. * PI * f1 * t));
-		rightdata = (short)(A * cos(2. * PI * f2 * t));
-		data[i * 2] = leftdata; data[i * 2 + 1] = rightdata;
-	}
 
+// Create wave file that produces "C" note at left speaker and "E" note at right speaker for 5 seconds
+# define PI 3.141592
+// 1. Stereo 써야겠다.
+void Example2() {
+	short* data; // short = 2 bytes(16 bits) -> 이 값 범위로 sinusoidal 값 다 표현
+	short rightdata, leftdata;
+	waveHeader myHeader;
+	int n = myHeader.sampleRate * 5; // 5 초 = 44100 * 5 개의 note data 가지고 있어야 됨.
+
+	data = new short[n * myHeader.numChannels]; // numChannels = 2 -> 좌우 따로 해서 두 배의 데이터를 들고 있어야 함.
+	float dt = 1.0 / (float)(myHeader.sampleRate);
+	float f_note_C = 261.63, f_note_E = 329.63, Amplitude = 10000.0;
+
+	for (int i = 0; i < n; i++) {
+		// n : 재생시간 5초 동안 총 data 수
+		float t = i * dt;
+
+		leftdata = (short)(Amplitude * cos(2.0 * PI * f_note_C * t));
+		rightdata = (short)(Amplitude * cos(2.0 * PI * f_note_E * t));
+		data[i * 2] = leftdata;
+		data[i * 2 + 1] = rightdata;
+	}
 	ofstream mywave("mywave.wav", ios::binary | ios::out);
 	mywave.write((char*)&myHeader, sizeof(waveHeader));
 	mywave.write((char*)data, sizeof(short) * n * myHeader.numChannels);
 	mywave.close();
+
+	
 }
 
 #define pi2 2 * 3.141592

@@ -18,29 +18,43 @@ int Example1() {
 	out.close();
 	return 0;
 }
-int Example2() {
-	// Reading
-	ifstream xx("test.txt");
 
-	if (!xx) {
-		cout << "Cannot open test.txt file.\n";
-		return -1;
+int Example2() {
+	ofstream file("test.txt");
+
+	if (!file) {
+		cout << "fuck";
+		return 666;
 	}
 
-	char item[20];
-	float num;
+	file << "Apple " << 3500 << endl;
+	file << "Banana " << 1800 << endl;
+	file << "Kiwi " << 9000 << endl;
 
-	xx >> item >> num;
-	cout << item << " " << num << "\n";
-	xx >> item >> num;
-	cout << item << " " << num << "\n";
-	xx >> item >> num;
-	cout << item << " " << num << "\n";
+	file.close();
 
-	xx.close();
- 
+	ifstream open("test.txt");
+	
+	if (!open) {
+		cout << "Fuck";
+		return 666;
+	}
+
+	char item[20]; // 상품명 저장하기. Apple -> 5 글자니까 5 char = 5 bytes
+	float price;
+
+	open >> item >> price;
+	cout << item << " " << price << "\n";
+	open >> item >> price;
+	cout << item << " " << price << "\n";
+	open >> item >> price;
+	cout << item << " " << price << "\n";
+
+
+	open.close();
 	return 0;
 }
+
 int Example3() {
 	cout << pow(2, 3);
 	return 0;

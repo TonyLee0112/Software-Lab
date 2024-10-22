@@ -52,22 +52,27 @@ void Example2() {
 	}
 }
 /////////////////////////////////////////
-void binary(float x) {
-	float rx = x;
-	float n2 = 0.5;
-	int iteration = 0;
-	cout << x << "\t B0.";
-	while (rx != 0 && iteration++ < 20) {
-		if (rx >= n2) {
-			cout << "1";
-			rx -= n2;
-		}
-		else {
-			cout << "0";
-			n2 /= 2;
-		}
-	}
-	cout << endl;
+void binary(float remainder) {
+    // 주어진 소수를 이진수로 변환하는 함수
+    float fraction = 0.5;
+    int iteration = 0;
+    cout << remainder << "\t Binary number in 20 digits: 0.";  // 20자리까지 이진수 출력
+
+    while (remainder != 0 && iteration++ < 20) {
+        if (remainder >= fraction) {
+            // remainder가 fraction보다 크면 1을 출력
+            cout << "1";
+            // 나머지에서 현재 fraction을 빼줌
+            remainder -= fraction;
+        }
+        else {
+            // remainder가 fraction보다 작으면 0을 출력
+            cout << "0";
+            // fraction 값을 절반으로 줄여 더 작은 값으로 나눌 준비
+            remainder *= 2;
+        }
+    }
+    cout << endl;
 }
 void Example3() {
 	binary(0.1);

@@ -48,3 +48,36 @@ int Example2() {
 	}
 	return 123;
 }
+#include <cmath>
+#include <random>
+void Example5() {
+	// Example 5
+	// Continuous RV : uniform dist
+	float N = 10000;
+	float x, y, hit = 0;
+	for (int i = 0; i < N; i++) {
+		x = ((float)rand() / (float)RAND_MAX - 0.5) * 2;
+		y = ((float)rand() / (float)RAND_MAX - 0.5) * 2;
+		if (x * x + y * y < 1.0) hit += 1.0;
+	}
+	// hit / N = 원 / 정사각형 비율 = PI / 4
+	cout << 4. * hit / N << endl;
+}
+void Example6() {
+	// Continuous RV : Gaussian RV
+	default_random_engine generator;
+	normal_distribution<double> Gauss(5.0, 2.0);
+	double Ex = 0, Var = 0;
+	int N = 10000;
+	for (int i = 0; i < N; i++) {
+		double number = Gauss(generator);
+		Ex += number;
+		Var += pow(number, 2);
+	}
+	Ex /= (double)N;
+	Var /= (double)N;
+	Var -= pow(Ex, 2);
+
+	cout << " mean " << Ex << " " << "5.0\n";
+	cout << " Var " << Var << " " << "4.0\n";
+}

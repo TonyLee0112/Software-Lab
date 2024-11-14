@@ -90,7 +90,6 @@ int QPSK::countError() {
 		// Nbits = 2 -> [bits/symbol] : 2개의 비트에 대하여 검사
 		// mask : Xor 값을 2진수로 나타냈을 때 각 자리수를 가리키는 수
 		if ((mask & Xor) != 0) count++; // 0 : Error bit 발생X
-
 	}
 	number_of_error_bits += count;
 	return count;

@@ -87,7 +87,7 @@ void example2() {
 	// Make a input signal
 	cout << "Input signal : Discrete time Sinusoidal wave Signal" << endl;
 	for (int n = 0; n < N; n++) {
-		mydft.x[n] = cos(PI2 / 16. * n);
+		mydft.x[n] = cos(PI2 / (N/2) * n);
 	}
 
 	// Show Orthogonality

@@ -103,10 +103,7 @@ void main() {
 
 	// Print x[n] values
 	cout << "1. 원래 신호 x[n]" << endl;
-	for (int n = N/2; n < N-1; n++) {
-		cout << mydft.x(n).real() << " ";
-	}
-	for (int n = 0; n < N / 2 + 1; n++) {
+	for (int n = 0; n < N; n++) {
 		cout << mydft.x(n).real() << " ";
 	}
 	cout << endl << endl;
@@ -116,10 +113,7 @@ void main() {
 
 	// sinc function
 	cout << "2. DFT 결과 X[k] " << endl;
-	for (int k = N/2 ; k < N-1; k++) {
-		cout << abs(mydft.X(k)) << " ";
-	}
-	for (int k = 0; k < N / 2 + 1; k++) {
+	for (int k = 0 ; k < N; k++) {
 		cout << abs(mydft.X(k)) << " ";
 	}
 	cout << endl << endl;
@@ -128,10 +122,7 @@ void main() {
 	mydft.InverseDFT();
 
 	cout << "3. IDFT 로 복원된 신호 x~[n] " << endl << endl;
-	for (int n = N/2; n < N-1; n++) {
-		cout << mydft.x(n).real() << " ";
-	}
-	for (int n = 0; n < N / 2 + 1; n++) {
+	for (int n = 0; n < N; n++) {
 		cout << mydft.x(n).real() << " ";
 	}
 }
